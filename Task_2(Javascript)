@@ -1,0 +1,56 @@
+function calculateDiscount(cartTotal, quantity, productPrice) {
+    const flat10Discount = cartTotal > 200 ? 10 : 0;
+    const bulk5Discount = quantity > 10 ? 0.05 * productPrice : 0;
+    const bulk10Discount = quantity > 20 ? 0.1 * cartTotal : 0;
+    const tiered50Discount = quantity > 30 && quantity > 15 ? 0.5 * productPrice * (quantity - 15) : 0;
+
+    const discounts = {
+        flat_10_discount: flat10Discount,
+        bulk_5_discount: bulk5Discount,
+        bulk_10_discount: bulk10Discount,
+        tiered_50_discount: tiered50Discount
+    };
+
+    const maxDiscountRule = Object.keys(discounts).reduce((a, b) => discounts[a] > discounts[b] ? a : b);
+    return [maxDiscountRule, discounts[maxDiscountRule]];
+}
+
+function calculateShippingFee(quantity) {
+    return Math.floor(quantity / 10) * 5;
+}
+
+function main() {
+    const products = { "Product A": 20, "Product B": 40, "Product C": 50 };
+    let cartTotal = 0;
+    let shippingFee = 0;
+    let giftWrapFee = 0;
+
+    for (const [product, price] of Object.entries(products)) {
+        const quantity = parseInt(prompt(`Enter the quantity of ${product}: `));
+        const isGiftWrapped = prompt(`Is ${product} wrapped as a gift? (yes/no): `).toLowerCase() === "yes";
+
+        const productTotal = quantity * price;
+        cartTotal += productTotal;
+
+        if (isGiftWrapped) {
+            giftWrapFee += quantity;
+        }
+
+        shippingFee += calculateShippingFee(quantity);
+
+        console.log(`${product} - Quantity: ${quantity} - Total: $${productTotal}`);
+    }
+
+    const [discountRule, discountAmount] = calculateDiscount(cartTotal, quantity, price);
+    const subtotal = cartTotal - discountAmount;
+
+    console.log("\nSummary:");
+    console.log(`Subtotal: $${subtotal}`);
+    console.log(`Discount Applied: ${discountRule} - Amount: $${discountAmount}`);
+    console.log(`Shipping Fee: $${shippingFee}`);
+    console.log(`Gift Wrap Fee: $${giftWrapFee}`);
+    const total = subtotal + shippingFee + giftWrapFee;
+    console.log(`Total: $${total}`);
+}
+
+main();
