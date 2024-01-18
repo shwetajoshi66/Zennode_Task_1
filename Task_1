@@ -1,0 +1,52 @@
+def calculate_discount(cart_total, quantity, product_price):
+    flat_10_discount = 10 if cart_total > 200 else 0
+    bulk_5_discount = 0.05 * product_price if quantity > 10 else 0
+    bulk_10_discount = 0.1 * cart_total if quantity > 20 else 0
+    tiered_50_discount = 0.5 * product_price * (quantity - 15) if quantity > 30 and quantity > 15 else 0
+
+    discounts = {
+        "flat_10_discount": flat_10_discount,
+        "bulk_5_discount": bulk_5_discount,
+        "bulk_10_discount": bulk_10_discount,
+        "tiered_50_discount": tiered_50_discount
+    }
+
+    max_discount_rule = max(discounts, key=discounts.get)
+    return max_discount_rule, discounts[max_discount_rule]
+
+def calculate_shipping_fee(quantity):
+    return (quantity // 10) * 5
+
+def main():
+    products = {"Product A": 20, "Product B": 40, "Product C": 50}
+    cart_total = 0
+    shipping_fee = 0
+    gift_wrap_fee = 0
+
+    for product, price in products.items():
+        quantity = int(input(f"Enter the quantity of {product}: "))
+        is_gift_wrapped = input(f"Is {product} wrapped as a gift? (yes/no): ").lower() == "yes"
+
+        product_total = quantity * price
+        cart_total += product_total
+
+        if is_gift_wrapped:
+            gift_wrap_fee += quantity
+
+        shipping_fee += calculate_shipping_fee(quantity)
+
+        print(f"{product} - Quantity: {quantity} - Total: ${product_total}")
+
+    discount_rule, discount_amount = calculate_discount(cart_total, quantity, price)
+    subtotal = cart_total - discount_amount
+
+    print("\nSummary:")
+    print(f"Subtotal: ${subtotal}")
+    print(f"Discount Applied: {discount_rule} - Amount: ${discount_amount}")
+    print(f"Shipping Fee: ${shipping_fee}")
+    print(f"Gift Wrap Fee: ${gift_wrap_fee}")
+    total = subtotal + shipping_fee + gift_wrap_fee
+    print(f"Total: ${total}")
+
+if __name__ == "__main__":
+    main()
